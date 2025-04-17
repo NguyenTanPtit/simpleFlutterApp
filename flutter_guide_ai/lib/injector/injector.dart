@@ -1,4 +1,7 @@
+import 'package:dio/dio.dart';
+import 'package:flutter_guide_ai/repositories/login_repo/login_repo.dart';
 import 'package:get_it/get_it.dart';
+import 'package:rest_client/apis/login/login_api.dart';
 
 import 'modules/bloc_module.dart';
 import 'modules/database_module.dart';
@@ -19,5 +22,8 @@ class Injector {
     RestClientModule.init();
     ServiceModule.init();
     BlocModule.init();
+    instance.registerLazySingleton<Dio>(() => Dio());
+    instance.registerLazySingleton<LoginApi>(() => LoginApi(instance<Dio>()));
+    instance.registerLazySingleton<LoginRepository>(() => LoginRepositoryImpl(instance<LoginApi>()));
   }
 }
