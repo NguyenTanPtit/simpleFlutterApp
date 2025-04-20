@@ -19,10 +19,22 @@ class DioModule {
 
     dio.interceptors.add(InterceptorsWrapper(
       onRequest: (options, handler) async {
-        // TODO: Add token to header
+        print(
+          'Request: ${options.method} ${options.path} ${options.data} ${options.headers}',
+        );
         return handler.next(options);
       },
       onError: (DioException e, handler) async {
+        if (e.response?.statusCode == 401) {
+          // Handle token expiration
+          print('Token expired');
+        } else if (e.response?.statusCode == 403) {
+          // Handle forbidden access
+          print('Forbidden access');
+        } else if (e.response?.statusCode == 500) {
+          // Handle server error
+          print('Server error');
+        }
         return handler.next(e);
       },
     ));
