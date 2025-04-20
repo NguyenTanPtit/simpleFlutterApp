@@ -15,7 +15,9 @@ class LoginRepositoryImpl extends LoginRepository{
   LoginRepositoryImpl(this._loginApi);
   @override
   Future<User> login(LoginRequest request) {
+      print('API called with: username = ${request.userName}, password = ${request.password}');
       return _loginApi.login(request);
+
   }
 
 }
