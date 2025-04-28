@@ -14,6 +14,7 @@ class LoginScreen extends StatelessWidget {
     final TextEditingController _password = TextEditingController();
     final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       backgroundColor: const Color(0xFFFCF7F7),
       body: BlocBuilder<LoginBloc, LoginState>(builder: (context, state) {
         if (state is LoginSuccessState) {
@@ -43,7 +44,7 @@ class LoginScreen extends StatelessWidget {
                 height: 100,
               ),
               const SizedBox(
-                height: 20,
+                height: 10,
               ),
               const Text(
                 "Login",
@@ -55,68 +56,74 @@ class LoginScreen extends StatelessWidget {
               const SizedBox(
                 height: 20,
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
+              Form(
+                key: _formKey,
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Username',
-                      style: TextStyle(fontSize: 16),
-                    ),
-                    const SizedBox(height: 8),
-                    TextFormField(
-                        controller: _username,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter your username';
-                          }
-                          return null;
-                        }),
-                  ],
-                ),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Password',
-                      style: TextStyle(fontSize: 16),
-                    ),
-                    const SizedBox(height: 8),
-                    TextFormField(
-                      controller: _password,
-                      obscureText: true,
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Username',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                          const SizedBox(height: 8),
+                          TextFormField(
+                            controller: _username,
+                            decoration: const InputDecoration(
+                              border: OutlineInputBorder(),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter your username';
+                              }
+                              return null;
+                            },
+                          ),
+                        ],
                       ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your password';
-                        }
-                        if (value.length < 6) {
-                          return 'Password must be at least 6 characters long';
-                        }
-                        return null;
-                      },
+                    ),
+                    const SizedBox(height: 10),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Password',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                          const SizedBox(height: 8),
+                          TextFormField(
+                            controller: _password,
+                            obscureText: true,
+                            decoration: const InputDecoration(
+                              border: OutlineInputBorder(),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter your password';
+                              }
+                              if (value.length < 6) {
+                                return 'Password must be at least 6 characters long';
+                              }
+                              return null;
+                            },
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
               ),
               const SizedBox(
-                height: 20,
+                height: 5,
               ),
               Padding(
                 padding:
-                    const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                    const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
@@ -132,12 +139,23 @@ class LoginScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              ElevatedButton(
+              Padding(padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+              child: ElevatedButton(
                 onPressed: () {
-                  context.read<LoginBloc>().add(LoginEvent(
-                        _username.text,
-                        _password.text,
-                      ));
+                  if (_formKey.currentState!.validate()) {
+                    // If the form is valid, proceed with login
+                    context.read<LoginBloc>().add(LoginEvent(
+                      _username.text,
+                      _password.text,
+                    ));
+                  }else {
+                    // If the form is not valid, show an error message
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Please fill in all fields'),
+                      ),
+                    );
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                   minimumSize: const Size(380, 50),
@@ -147,7 +165,8 @@ class LoginScreen extends StatelessWidget {
                 child: state is LoginLoadingState
                     ? const CircularProgressIndicator(color: Colors.white)
                     : const Text("Login"),
-              ),
+              ),)
+
             ],
           );
         }

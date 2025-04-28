@@ -22,8 +22,5 @@ class Injector {
     RestClientModule.init();
     ServiceModule.init();
     BlocModule.init();
-    instance.registerLazySingleton<Dio>(() => Dio());
-    instance.registerLazySingleton<LoginApi>(() => LoginApi(instance<Dio>()));
-    instance.registerLazySingleton<LoginRepository>(() => LoginRepositoryImpl(instance<LoginApi>()));
   }
 }

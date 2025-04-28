@@ -6,11 +6,11 @@ part 'login_request.g.dart';
 
 @JsonSerializable()
 class LoginRequest extends Equatable{
-  String userName;
+  String username;
   String password;
   int expiresInMins = 30;
 
-  LoginRequest(this.userName, this.password, this.expiresInMins);
+  LoginRequest(this.username, this.password, this.expiresInMins);
 
   factory LoginRequest.fromJson(Map<String,dynamic> json) => _$LoginRequestFromJson(json);
 
@@ -19,6 +19,6 @@ class LoginRequest extends Equatable{
   @override
   // TODO: implement props
   List<Object?> get props => [
-    userName, password, expiresInMins
+    username, password, expiresInMins
   ];
 }
