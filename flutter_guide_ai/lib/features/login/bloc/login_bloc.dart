@@ -4,6 +4,8 @@ import 'package:flutter_guide_ai/features/login/bloc/login_state.dart';
 import 'package:rest_client/models/login/login_request.dart';
 import 'package:rest_client/models/login/user.dart';
 
+import 'dart:developer';
+
 import '../../../repositories/login_repo/login_repo.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
@@ -15,18 +17,29 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     });
   }
 
+
   Future<void> _onLoginEvent(LoginEvent event, Emitter<LoginState> emit) async {
     emit(LoginLoadingState());
     try {
       final LoginRequest request =
-          LoginRequest(event.username, event.password, 30);
+      LoginRequest(event.username, event.password, 30);
+
+      // Log the request
+      log('Login API Request: ${request.toJson()}');
+
       final User? user = await _loginRepository.login(request);
-      if (user == null) {
+
+      // Log the response
+      if (user != null) {
+        log('Login API Response: ${user.toJson()}');
+        emit(LoginSuccessState(user));
+      } else {
+        log('Login API Response: null');
         emit(LoginErrorState("Login failed"));
-        return;
       }
-      emit(LoginSuccessState(user));
     } catch (e) {
+      // Log the error
+      log('Login API Error: $e');
       emit(LoginErrorState(e.toString()));
     }
   }
